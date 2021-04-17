@@ -194,7 +194,7 @@ bool GlideEffect::isActive() const
 
 bool GlideEffect::supported()
 {
-    return effects->isOpenGLCompositing()
+    return (effects->isOpenGLCompositing() || effects->compositingType() == VulkanCompositing)
         && effects->animationsSupported();
 }
 

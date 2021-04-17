@@ -58,8 +58,13 @@ public:
         return m_hasXInput;
     }
 
+    xcb_visualid_t visual() const {
+        return m_screen->root_visual;
+    }
+
     OpenGLBackend *createOpenGLBackend() override;
     QPainterBackend* createQPainterBackend() override;
+    VulkanBackend* createVulkanBackend() override;
     void warpPointer(const QPointF &globalPos) override;
 
     QVector<CompositingType> supportedCompositors() const override {

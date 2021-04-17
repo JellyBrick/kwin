@@ -10,3 +10,4 @@
 Q_LOGGING_CATEGORY(LIBKWINEFFECTS, "libkwineffects", QtWarningMsg)
 Q_LOGGING_CATEGORY(LIBKWINGLUTILS, "libkwinglutils", QtWarningMsg)
 Q_LOGGING_CATEGORY(LIBKWINXRENDERUTILS, "libkwinxrenderutils", QtWarningMsg)
+Q_LOGGING_CATEGORY(LIBKWINVULKANUTILS, "libkwinvulkanutils", QtCriticalMsg)

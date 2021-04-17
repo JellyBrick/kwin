@@ -34,12 +34,23 @@ if (HAVE_EPOXY_GLX)
     )
 endif()
 
+
+include_directories(${CMAKE_SOURCE_DIR}/platformsupport/scenes/opengl)
+include_directories(${CMAKE_SOURCE_DIR}/platformsupport/scenes/vulkan)
+
+if (Vulkan_FOUND)
+    set(X11PLATFORM_SOURCES ${X11PLATFORM_SOURCES} vulkanbackend.cpp)
+endif()
 if (KWIN_BUILD_XRENDER_COMPOSITING)
     target_sources(KWinX11Platform PRIVATE x11xrenderbackend.cpp)
     target_link_libraries(KWinX11Platform SceneXRenderBackend)
 endif()
 
-if (HAVE_DL_LIBRARY)
+if (Vulkan_FOUND)
+    target_link_libraries(KWinX11Platform SceneVulkanBackend kwinvulkanutils)
+endif()
+
+if(HAVE_DL_LIBRARY)
     target_link_libraries(KWinX11Platform ${DL_LIBRARY})
 endif()
 

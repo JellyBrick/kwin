@@ -89,10 +89,30 @@ set_target_properties(kwinglutils PROPERTIES
 
 install(TARGETS kwinglutils EXPORT KWinEffectsTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
 
+if (Vulkan_FOUND)
+    set(kwin_VULKANUTILSLIB_SRCS
+        kwinvulkanutils.cpp
+        kwinvulkanutils_funcs.cpp
+        logging.cpp
+    )
+
+    add_library(kwinvulkanutils SHARED ${kwin_VULKANUTILSLIB_SRCS})
+    generate_export_header(kwinvulkanutils BASE_NAME kwinvulkanutils EXPORT_FILE_NAME kwinvulkanutils_export.h)
+    set_target_properties(kwinvulkanutils PROPERTIES
+                          OUTPUT_NAME ${KWIN_NAME}vulkanutils
+                          VERSION ${KWINEFFECTS_VERSION_STRING}
+                          SOVERSION ${KWINEFFECTS_SOVERSION}
+                         )
+
+    target_link_libraries(kwinvulkanutils PUBLIC Qt5::Core Qt5::Gui KF5::ConfigCore KF5::CoreAddons KF5::WindowSystem Vulkan::Vulkan)
+    install(TARGETS kwinvulkanutils EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS})
+endif()
+
 install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/kwinconfig.h
     ${CMAKE_CURRENT_BINARY_DIR}/kwineffects_export.h
     ${CMAKE_CURRENT_BINARY_DIR}/kwinglutils_export.h
+    ${CMAKE_CURRENT_BINARY_DIR}/kwinvulkanutils_export.h
     ${CMAKE_CURRENT_BINARY_DIR}/kwinxrenderutils_export.h
     kwinanimationeffect.h
     kwineffectquickview.h
@@ -103,6 +123,7 @@ install(FILES
     kwinglutils.h
     kwinglutils_funcs.h
     kwinxrenderutils.h
+    kwinvulkanutils.h
     DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)
 
 set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KWinEffects")

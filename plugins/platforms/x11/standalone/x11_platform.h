@@ -37,6 +37,7 @@ public:
     void init() override;
 
     OpenGLBackend *createOpenGLBackend() override;
+    VulkanBackend *createVulkanBackend() override;
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     XRenderBackend *createXRenderBackend() override;
 #endif

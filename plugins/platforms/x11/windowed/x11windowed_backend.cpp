@@ -15,6 +15,9 @@
 #include "egl_x11_backend.h"
 #include "screens.h"
 #include <kwinxrenderutils.h>
+#if HAVE_VULKAN
+#include "x11_vulkan_backend.h"
+#endif
 #include <cursor.h>
 #include <pointer_input.h>
 // KDE
@@ -509,11 +512,33 @@ QPainterBackend *X11WindowedBackend::createQPainterBackend()
     return new X11WindowedQPainterBackend(this);
 }
 
+VulkanBackend *X11WindowedBackend::createVulkanBackend()
+{
+#if HAVE_VULKAN
+    return new X11VulkanBackend(this);
+#else
+    return nullptr;
+#endif
+}
+
 void X11WindowedBackend::warpPointer(const QPointF &globalPos)
 {
     const xcb_window_t w = m_outputs.at(0)->window();
     xcb_warp_pointer(m_connection, w, w, 0, 0, 0, 0, globalPos.x(), globalPos.y());
     xcb_flush(m_connection);
+}
+
+QVector<CompositingType> X11WindowedBackend::supportedCompositors() const
+{
+    QVector<CompositingType> types;
+
+    types << OpenGLCompositing;
+#ifdef HAVE_VULKAN
+    types << VulkanCompositing;
+#endif
+    types << QPainterCompositing;
+
+    return types;
 }
 
 xcb_window_t X11WindowedBackend::windowForScreen(int screen) const

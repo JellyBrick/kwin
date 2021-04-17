@@ -64,6 +64,39 @@ enum RenderTimeEstimator {
 
 class Settings;
 
+
+/**
+ * Tuple of a physical device index, vendor ID and device ID.
+ */
+class VulkanDeviceId
+{
+public:
+    VulkanDeviceId(uint32_t index, uint32_t vendorId, uint32_t deviceId)
+        : m_index(index), m_vendorId(vendorId), m_deviceId(deviceId) {}
+
+    uint32_t index() const { return m_index; }
+    uint32_t vendorId() const { return m_vendorId; }
+    uint32_t deviceId() const { return m_deviceId; }
+
+    bool operator == (const VulkanDeviceId &other) const {
+        return m_index == other.m_index &&
+               m_vendorId == other.m_vendorId &&
+               m_deviceId == other.m_deviceId;
+    }
+
+    bool operator != (const VulkanDeviceId &other) const {
+        return m_index != other.m_index ||
+               m_vendorId != other.m_vendorId ||
+               m_deviceId != other.m_deviceId;
+    }
+
+private:
+    uint32_t m_index;
+    uint32_t m_vendorId;
+    uint32_t m_deviceId;
+};
+
+
 class KWIN_EXPORT Options : public QObject
 {
     Q_OBJECT
@@ -195,6 +228,8 @@ class KWIN_EXPORT Options : public QObject
     Q_PROPERTY(bool glStrictBindingFollowsDriver READ isGlStrictBindingFollowsDriver WRITE setGlStrictBindingFollowsDriver NOTIFY glStrictBindingFollowsDriverChanged)
     Q_PROPERTY(bool glCoreProfile READ glCoreProfile WRITE setGLCoreProfile NOTIFY glCoreProfileChanged)
     Q_PROPERTY(GlSwapStrategy glPreferBufferSwap READ glPreferBufferSwap WRITE setGlPreferBufferSwap NOTIFY glPreferBufferSwapChanged)
+    Q_PROPERTY(VulkanDeviceId vulkanDevice READ vulkanDevice WRITE setVulkanDevice NOTIFY vulkanDeviceChanged)
+    Q_PROPERTY(int vulkanVsync READ vulkanVsync WRITE setVulkanVsync NOTIFY vulkanVsyncChanged)
     Q_PROPERTY(KWin::OpenGLPlatformInterface glPlatformInterface READ glPlatformInterface WRITE setGlPlatformInterface NOTIFY glPlatformInterfaceChanged)
     Q_PROPERTY(bool windowsBlockCompositing READ windowsBlockCompositing WRITE setWindowsBlockCompositing NOTIFY windowsBlockCompositingChanged)
     Q_PROPERTY(LatencyPolicy latencyPolicy READ latencyPolicy WRITE setLatencyPolicy NOTIFY latencyPolicyChanged)
@@ -596,6 +631,14 @@ public:
         return m_glPreferBufferSwap;
     }
 
+    VulkanDeviceId vulkanDevice() const {
+        return m_vulkanDevice;
+    }
+
+    int vulkanVsync() const {
+        return m_vulkanVsync;
+    }
+
     bool windowsBlockCompositing() const
     {
         return m_windowsBlockCompositing;
@@ -664,6 +707,8 @@ public:
     void setGLCoreProfile(bool glCoreProfile);
     void setGlPreferBufferSwap(char glPreferBufferSwap);
     void setGlPlatformInterface(OpenGLPlatformInterface interface);
+    void setVulkanDevice(const VulkanDeviceId &device);
+    void setVulkanVsync(int vsync);
     void setWindowsBlockCompositing(bool set);
     void setMoveMinimizedWindowsToEndOfTabBoxFocusChain(bool set);
     void setLatencyPolicy(LatencyPolicy policy);
@@ -757,6 +802,12 @@ public:
     static GlSwapStrategy defaultGlPreferBufferSwap() {
         return AutoSwapStrategy;
     }
+    static VulkanDeviceId defaultVulkanDevice() {
+        return VulkanDeviceId(0, 0, 0);
+    }
+    static int defaultVulkanVSync() {
+        return 1;
+    }
     static OpenGLPlatformInterface defaultGlPlatformInterface() {
         return kwinApp()->shouldUseWaylandForCompositing() ? EglPlatformInterface : GlxPlatformInterface;
     }
@@ -840,6 +891,8 @@ Q_SIGNALS:
     void glCoreProfileChanged();
     void glPreferBufferSwapChanged();
     void glPlatformInterfaceChanged();
+    void vulkanDeviceChanged();
+    void vulkanVsyncChanged();
     void windowsBlockCompositingChanged();
     void animationSpeedChanged();
     void latencyPolicyChanged();
@@ -886,6 +939,8 @@ private:
     bool m_glCoreProfile;
     GlSwapStrategy m_glPreferBufferSwap;
     OpenGLPlatformInterface m_glPlatformInterface;
+    VulkanDeviceId m_vulkanDevice;
+    int m_vulkanVsync;
     bool m_windowsBlockCompositing;
     bool m_MoveMinimizedWindowsToEndOfTabBoxFocusChain;
 

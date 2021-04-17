@@ -1001,7 +1001,24 @@ void SceneOpenGL2::paintGenericScreen(int mask, const ScreenPaintData &data)
 
     m_screenProjectionMatrix = m_projectionMatrix * screenMatrix;
 
+    bool resetCullMode = false;
+
+    if (mask & PAINT_SCREEN_WITH_FACE_CULLING) {
+        if (data.cullMode()) {
+            const GLenum modes[] = { GL_NONE, GL_FRONT, GL_BACK, GL_FRONT_AND_BACK };
+            glCullFace(modes[int(data.cullMode())]);
+            glEnable(GL_CULL_FACE);
+            resetCullMode = true;
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
+    }
+
     Scene::paintGenericScreen(mask, data);
+
+    if (resetCullMode) {
+        glDisable(GL_CULL_FACE);
+    }
 }
 
 void SceneOpenGL2::doPaintBackground(const QVector< float >& vertices)
@@ -2659,11 +2676,6 @@ void SceneOpenGLDecorationRenderer::render()
     renderPart(top.intersected(geometry), top, topPosition);
     renderPart(right.intersected(geometry), right, rightPosition, true);
     renderPart(bottom.intersected(geometry), bottom, bottomPosition);
-}
-
-static int align(int value, int align)
-{
-    return (value + align - 1) & ~(align - 1);
 }
 
 void SceneOpenGLDecorationRenderer::resizeTexture()

@@ -173,6 +173,7 @@ public:
 
     OpenGLBackend *createOpenGLBackend() override;
     QPainterBackend *createQPainterBackend() override;
+    VulkanBackend *createVulkanBackend() override;
     DmaBufTexture *createDmaBufTexture(const QSize &size) override;
 
     void flush();

@@ -345,3 +345,8 @@ Comment[uk]=Xwayland завершив роботу в аварійному ре�
 Comment[x-test]=xxXwayland has crashedxx
 Comment[zh_CN]=Xwayland 已经崩溃
 Action=Popup
+
+[Event/compositingfailed]
+Name=Compositing Failed
+Comment=Desktop effects have been suspended due to a fatal error
+Action=Popup

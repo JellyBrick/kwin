@@ -65,6 +65,8 @@ Options::Options(QObject *parent)
     , m_glCoreProfile(Options::defaultGLCoreProfile())
     , m_glPreferBufferSwap(Options::defaultGlPreferBufferSwap())
     , m_glPlatformInterface(Options::defaultGlPlatformInterface())
+    , m_vulkanDevice(0, 0, 0)
+    , m_vulkanVsync(1)
     , m_windowsBlockCompositing(true)
     , m_MoveMinimizedWindowsToEndOfTabBoxFocusChain(false)
     , OpTitlebarDblClick(Options::defaultOperationTitlebarDblClick())
@@ -663,6 +665,24 @@ void Options::setRenderTimeEstimator(RenderTimeEstimator estimator)
     emit renderTimeEstimatorChanged();
 }
 
+void Options::setVulkanDevice(const VulkanDeviceId &device)
+{
+    if (m_vulkanDevice != device) {
+        m_vulkanDevice = device;
+        emit vulkanDeviceChanged();
+    }
+}
+
+void Options::setVulkanVsync(int vsync)
+{
+    vsync = std::min(std::max(vsync, 0), 2);
+
+    if (m_vulkanVsync != vsync) {
+        m_vulkanVsync = vsync;
+        emit vulkanVsyncChanged();
+    }
+}
+
 void Options::setGlPlatformInterface(OpenGLPlatformInterface interface)
 {
     // check environment variable
@@ -825,6 +845,8 @@ bool Options::loadCompositingConfig (bool force)
         compositingMode = XRenderCompositing;
     else if (compositingBackend == "QPainter")
         compositingMode = QPainterCompositing;
+    else if (compositingBackend == "Vulkan")
+        compositingMode = VulkanCompositing;
     else
         compositingMode = OpenGLCompositing;
 
@@ -843,6 +865,11 @@ bool Options::loadCompositingConfig (bool force)
         case 'Q':
             qCDebug(KWIN_CORE) << "Compositing forced to QPainter mode by environment variable";
             compositingMode = QPainterCompositing;
+            useCompositing = true;
+            break;
+        case 'V':
+            qCDebug(KWIN_CORE) << "Compositing forced to Vulkan mode by environment variable";
+            compositingMode = VulkanCompositing;
             useCompositing = true;
             break;
         case 'N':
@@ -900,6 +927,27 @@ void Options::reloadCompositingSettings(bool force)
     setGlPreferBufferSwap(c);
 
     m_xrenderSmoothScale = config.readEntry("XRenderSmoothScale", false);
+
+    const QStringList vulkanDeviceEntry = config.readEntry("VulkanDevice", QStringList());
+    if (vulkanDeviceEntry.count() == 3) {
+        uint32_t index, vendorId, deviceId;
+        bool ok = true;
+        if (ok) index    = vulkanDeviceEntry.at(0).toUInt(&ok, 0);
+        if (ok) vendorId = vulkanDeviceEntry.at(1).toUInt(&ok, 0);
+        if (ok) deviceId = vulkanDeviceEntry.at(2).toUInt(&ok, 0);
+        if (!ok) index = vendorId = deviceId = 0;
+        setVulkanDevice(VulkanDeviceId(index, vendorId, deviceId));
+    } else {
+        setVulkanDevice(VulkanDeviceId(0, 0, 0));
+    }
+
+    const QString vulkanVsync = config.readEntry("VulkanVSync", "Doublebuffer");
+    if (vulkanVsync == QStringLiteral("Off"))
+        setVulkanVsync(0);
+    else if (vulkanVsync == QStringLiteral("Triplebuffer"))
+        setVulkanVsync(2);
+    else
+        setVulkanVsync(1);
 
     HiddenPreviews previews = Options::defaultHiddenPreviews();
     // 4 - off, 5 - shown, 6 - always, other are old values

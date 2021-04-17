@@ -342,6 +342,10 @@ public:
          */
         PAINT_WINDOW_LANCZOS = 1 << 8
         // PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS = 1 << 9 has been removed
+        /**
+         * Use the cull mode in ScreenPaintData when painting the screen.
+         */
+        PAINT_SCREEN_WITH_FACE_CULLING = 1 << 10
     };
 
     enum Feature {
@@ -2514,6 +2518,13 @@ struct GLVertex3D
     QVector2D texcoord;
 };
 
+struct GLCrossFadeVertex2D
+{
+    QVector2D position;
+    QVector2D texcoord1;
+    QVector2D texcoord2;
+};
+
 
 /**
  * @short Vertex class
@@ -2987,6 +2998,15 @@ private:
     WindowPaintDataPrivate * const d;
 };
 
+enum class CullModeFlag {
+    None         = 0,
+    Front        = 0x00000001,
+    Back         = 0x00000002,
+    FrontAndBack = 0x00000003,
+};
+
+Q_DECLARE_FLAGS(CullModeFlags, CullModeFlag)
+
 class KWINEFFECTS_EXPORT ScreenPaintData : public PaintData
 {
 public:
@@ -3053,6 +3073,22 @@ public:
      * @since 5.9
      */
     QRect outputGeometry() const;
+
+    /**
+     * Sets the cull mode that will be used when painting the screen.
+     *
+     * The default setting is CullModeFlag::None.
+     *
+     * @since 5.12
+     */
+    void setCullMode(CullModeFlags cullMode);
+
+    /**
+     * Returns the cull mode that will be used when painting the screen.
+     *
+     * @since 5.12
+     */
+    CullModeFlags cullMode() const;
 
     /**
      * The scale factor for the output

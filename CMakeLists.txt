@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
 set(PROJECT_VERSION "5.21.4") # Handled by release scripts
 project(KWin VERSION ${PROJECT_VERSION})
@@ -165,6 +165,17 @@ set_package_properties(epoxy PROPERTIES
     TYPE REQUIRED
     PURPOSE "OpenGL dispatch library"
 )
+
+find_package(Vulkan)
+set_package_properties(Vulkan PROPERTIES DESCRIPTION "Vulkan"
+                       URL "https://www.khronos.org/vulkan"
+                       TYPE RUNTIME
+                       PURPOSE "Graphics and compute API"
+                      )
+
+if (Vulkan_FOUND)
+    set(HAVE_VULKAN TRUE)
+endif()
 
 set(HAVE_DL_LIBRARY FALSE)
 if (epoxy_HAS_GLX)

@@ -40,6 +40,7 @@ class RenderLoop;
 class Scene;
 class ScreenEdges;
 class Toplevel;
+class VulkanBackend;
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
 class XRenderBackend;
 #endif
@@ -70,6 +71,7 @@ public:
     virtual void init() = 0;
     virtual OpenGLBackend *createOpenGLBackend();
     virtual QPainterBackend *createQPainterBackend();
+    virtual VulkanBackend *createVulkanBackend();
 #ifdef KWIN_HAVE_XRENDER_COMPOSITING
     virtual XRenderBackend *createXRenderBackend();
 #endif

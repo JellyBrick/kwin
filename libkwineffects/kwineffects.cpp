@@ -423,6 +423,7 @@ class ScreenPaintData::Private
 public:
     QMatrix4x4 projectionMatrix;
     QRect outputGeometry;
+    CullModeFlags cullMode = CullModeFlag::None;
     qreal screenScale;
 };
 
@@ -456,6 +457,7 @@ ScreenPaintData::ScreenPaintData(const ScreenPaintData &other)
     setRotationAngle(other.rotationAngle());
     d->projectionMatrix = other.d->projectionMatrix;
     d->outputGeometry = other.d->outputGeometry;
+    d->cullMode = other.d->cullMode;
 }
 
 ScreenPaintData &ScreenPaintData::operator=(const ScreenPaintData &rhs)
@@ -471,6 +473,7 @@ ScreenPaintData &ScreenPaintData::operator=(const ScreenPaintData &rhs)
     setRotationAngle(rhs.rotationAngle());
     d->projectionMatrix = rhs.d->projectionMatrix;
     d->outputGeometry = rhs.d->outputGeometry;
+    d->cullMode = rhs.d->cullMode;
     return *this;
 }
 
@@ -531,6 +534,16 @@ QRect ScreenPaintData::outputGeometry() const
 qreal ScreenPaintData::screenScale() const
 {
     return d->screenScale;
+}
+
+void ScreenPaintData::setCullMode(CullModeFlags cullMode)
+{
+    d->cullMode = cullMode;
+}
+
+CullModeFlags ScreenPaintData::cullMode() const
+{
+    return d->cullMode;
 }
 
 //****************************************

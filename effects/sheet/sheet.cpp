@@ -141,7 +141,7 @@ bool SheetEffect::isActive() const
 
 bool SheetEffect::supported()
 {
-    return effects->isOpenGLCompositing()
+    return (effects->isOpenGLCompositing() || effects->compositingType() == VulkanCompositing)
         && effects->animationsSupported();
 }
 

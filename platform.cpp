@@ -96,6 +96,11 @@ void Platform::prepareShutdown()
     setOutputsEnabled(false);
 }
 
+VulkanBackend *Platform::createVulkanBackend()
+{
+    return nullptr;
+}
+
 Edge *Platform::createScreenEdge(ScreenEdges *edges)
 {
     return new Edge(edges);

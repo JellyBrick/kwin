@@ -138,8 +138,9 @@ public:
         PAINT_SCREEN_BACKGROUND_FIRST = 1 << 6,
         // PAINT_DECORATION_ONLY = 1 << 7 has been removed
         // Window will be painted with a lanczos filter.
-        PAINT_WINDOW_LANCZOS = 1 << 8
+        PAINT_WINDOW_LANCZOS = 1 << 8,
         // PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS = 1 << 9 has been removed
+        PAINT_SCREEN_WITH_FACE_CULLING = 1 << 10
     };
     // types of filtering available
     enum ImageFilterType { ImageFilterFast, ImageFilterGood };
@@ -204,6 +205,7 @@ public:
 Q_SIGNALS:
     void frameRendered();
     void resetCompositing();
+    void compositingFailed();
 
 public Q_SLOTS:
     // a window has been closed

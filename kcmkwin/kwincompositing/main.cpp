@@ -148,6 +148,19 @@ void KWinCompositingKCM::init()
         }
     );
 
+    // Vulkan device
+    if (auto *model = m_compositing->vulkanDeviceModel()) {
+        m_form.vulkanDevice->setModel((QAbstractItemModel *) model);
+        m_form.vulkanDevice->setCurrentIndex(m_compositing->vkDevice());
+    }
+    connect(m_compositing, &Compositing::vkDeviceChanged, m_form.vulkanDevice, &QComboBox::setCurrentIndex);
+    connect(m_form.vulkanDevice, currentIndexChangedSignal, m_compositing, &Compositing::setVkDevice);
+
+    // Vulkan V-sync setting
+    m_form.vulkanVSync->setCurrentIndex(m_compositing->vkVSync());
+    connect(m_compositing, &Compositing::vkVSyncChanged, m_form.vulkanVSync, &QComboBox::setCurrentIndex);
+    connect(m_form.vulkanVSync, currentIndexChangedSignal, m_compositing, &Compositing::setVkVSync);
+
     // windowThumbnail
     connect(m_form.kcfg_HiddenPreviews, currentIndexChangedSignal, this,
         [this](int index) {
@@ -163,6 +176,7 @@ void KWinCompositingKCM::init()
     m_form.backend->addItem(i18n("OpenGL 3.1"), CompositingTypeIndex::OPENGL31_INDEX);
     m_form.backend->addItem(i18n("OpenGL 2.0"), CompositingTypeIndex::OPENGL20_INDEX);
     m_form.backend->addItem(i18n("XRender"), CompositingTypeIndex::XRENDER_INDEX);
+    m_form.backend->addItem(i18n("Vulkan"), CompositingTypeIndex::VULKAN_INDEX);
 
     connect(m_form.backend, currentIndexChangedSignal, this, &KWinCompositingKCM::onBackendChanged);
 
@@ -177,6 +191,10 @@ void KWinCompositingKCM::onBackendChanged()
 
     m_form.kcfg_glTextureFilter->setVisible(currentType != CompositingTypeIndex::XRENDER_INDEX);
     m_form.kcfg_XRenderSmoothScale->setVisible(currentType == CompositingTypeIndex::XRENDER_INDEX);
+    m_form.kcfg_vulkanDevice->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.kcfg_vulkanDeviceLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.kcfg_vulkanVSync->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.kcfg_vulkanVSyncLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
 
     updateUnmanagedItemStatus();
 }

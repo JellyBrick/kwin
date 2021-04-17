@@ -13,6 +13,10 @@ set(kwincompositing_SRC
     kwincompositingdata.cpp
 )
 
+if (Vulkan_FOUND)
+    set (kwincomposing_SRC ${kwincomposing_SRC} vulkandevicemodel.cpp)
+endif()
+
 kconfig_add_kcfg_files(kwincompositing_SRC kwincompositing_setting.kcfgc GENERATE_MOC)
 
 qt5_add_dbus_interface(kwincompositing_SRC
@@ -32,6 +36,10 @@ target_link_libraries(kwincompositing
     KF5::I18n
     KF5::KCMUtils
 )
+
+if (Vulkan_FOUND)
+    target_link_libraries(kwincompositing kwinvulkanutils)
+endif()
 
 install(TARGETS kwincompositing DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kwincompositing.desktop DESTINATION ${SERVICES_INSTALL_DIR})
