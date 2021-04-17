@@ -191,10 +191,10 @@ void KWinCompositingKCM::onBackendChanged()
 
     m_form.kcfg_glTextureFilter->setVisible(currentType != CompositingTypeIndex::XRENDER_INDEX);
     m_form.kcfg_XRenderSmoothScale->setVisible(currentType == CompositingTypeIndex::XRENDER_INDEX);
-    m_form.kcfg_vulkanDevice->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
-    m_form.kcfg_vulkanDeviceLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
-    m_form.kcfg_vulkanVSync->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
-    m_form.kcfg_vulkanVSyncLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.vulkanDevice->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.vulkanDeviceLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.vulkanVSync->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
+    m_form.vulkanVSyncLabel->setVisible(currentType == CompositingTypeIndex::VULKAN_INDEX);
 
     updateUnmanagedItemStatus();
 }
