@@ -340,7 +340,7 @@ public:
         /**
          * Window will be painted with a lanczos filter.
          */
-        PAINT_WINDOW_LANCZOS = 1 << 8
+        PAINT_WINDOW_LANCZOS = 1 << 8,
         // PAINT_SCREEN_WITH_TRANSFORMED_WINDOWS_WITHOUT_FULL_REPAINTS = 1 << 9 has been removed
         /**
          * Use the cull mode in ScreenPaintData when painting the screen.
